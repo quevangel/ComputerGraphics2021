@@ -13,6 +13,7 @@ int main()
 	auto dx = x2 - x1;
 	auto dy = y2 - y1;
 	printf("   X   Y\n");
+	if (dx == 0 && dy == 0) { printf("%4d%4d\n", x1, y1); return 0; }
 	if (abs(dx) >= abs(dy))
 	{
 		for(int x = min(x1, x2); x <= max(x1, x2); x++)
