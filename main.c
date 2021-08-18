@@ -8,7 +8,8 @@
 int main()
 {
 	int x1, y1, x2, y2;
-	scanf(" (%d,%d) , (%d,%d)", &x1, &y1, &x2, &y2);
+	printf("Write (x1, y1) (x2, y2) in that format (\"(2, 6) (12, 2)\" for example)\n");
+	scanf(" (%d,%d) (%d,%d)", &x1, &y1, &x2, &y2);
 	auto dx = x2 - x1;
 	auto dy = y2 - y1;
 	printf("   X   Y\n");
