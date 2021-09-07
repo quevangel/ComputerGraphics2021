@@ -1,5 +1,15 @@
-main: main.o
-	gcc main.o -o main
+CC=gcc -g -c -pedantic -std=c99
+main: main.o obj.o render.o
+	gcc main.o obj.o render.o -o main
 
-main.o: main.c
-	gcc -O2 -c -pedantic -std=c99 main.c
+main.o: main.c obj.h project.h render.h
+	$(CC) main.c
+
+obj.o: obj.c obj.h
+	$(CC) obj.c
+
+render.o: render.c render.h
+	$(CC) render.c
+
+clean:
+	rm *o
