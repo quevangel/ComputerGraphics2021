@@ -5,7 +5,9 @@
 #include <assert.h>
 #include <math.h>
 #include <stdlib.h>
+#include <pthread.h>
 
+struct vertex2d* render_vertices;
 int image[IMAGE_WIDTH][IMAGE_HEIGHT];
 
 void
@@ -141,14 +143,24 @@ bresenham_render_line (int x1, int y1, int x2, int y2)
     }
 }
 
-
 void
-render_xy (FILE * file, void (*render_line) (int, int, int, int))
+print_image(FILE* file, int resolution)
 {
-  int resolution = 255;
   fprintf (file, "P3\n");
   fprintf (file, "%d %d\n", IMAGE_WIDTH, IMAGE_HEIGHT);
   fprintf (file, "%d\n", resolution);
+  
+  for (int y = IMAGE_HEIGHT - 1; y >= 0; y--)
+    for (int x = 0; x < IMAGE_WIDTH; x++)
+      {
+	int pixel = MIN (image[x][y], resolution);
+	fprintf (file, "%d %d %d\n", pixel, pixel, pixel);
+      }
+}
+
+struct vertex2d *
+get_render_vertices()
+{
   float lox = INFINITY, loy = INFINITY, hix = -INFINITY, hiy = -INFINITY;
   struct vertex2d *render_vertices =
     malloc (sizeof (struct vertex2d) * MAX_VERTICES);
@@ -176,7 +188,14 @@ render_xy (FILE * file, void (*render_line) (int, int, int, int))
       render_vertices[i].x *= factor;
       render_vertices[i].y *= factor;
     }
-  for (int i = 0; i < no_faces; i++)
+  return render_vertices;
+}
+
+void
+render_xy (void (*render_line) (int, int, int, int), struct vertex2d* render_vertices,
+	   int from, int to)
+{
+  for (int i = from; i <= to; i++)
     {
       struct face face = faces[i];
       for (int j = 0; j < face.no_indices; j++)
@@ -191,11 +210,56 @@ render_xy (FILE * file, void (*render_line) (int, int, int, int))
 	  render_line (v1.x, v1.y, v2.x, v2.y);
 	}
     }
-  for (int y = IMAGE_HEIGHT - 1; y >= 0; y--)
-    for (int x = 0; x < IMAGE_WIDTH; x++)
-      {
-	int pixel = MIN (image[x][y], resolution);
-	fprintf (file, "%d %d %d\n", pixel, pixel, pixel);
-      }
+}
+struct render_xy_args
+{
+  void (*render_line)(int, int, int, int);
+  struct vertex2d* render_vertices;
+  int from, to;
+};
+void*
+render_xy_pthread(void* arg_ptr)
+{
+  struct render_xy_args *args = arg_ptr;
+  render_xy(args->render_line, args->render_vertices, args->from, args->to);
+  free(args);
+  return NULL;
+}
 
+enum {MAX_THREADS = 100};
+void
+render_xy_multithreaded(int num_threads, void (*render_line) (int, int, int, int))
+{
+  int faces = no_faces;
+  int rest = faces % num_threads;
+  int per_thread_min = faces / num_threads;
+  pthread_t threads[MAX_THREADS];
+  int face_ptr = 0;
+  struct vertex2d* render_vertices = get_render_vertices();
+  for(int i = 0; i < num_threads; i++)
+    {
+      int todo = per_thread_min;
+      if (rest)
+	{
+	  todo++;
+	  rest--;
+	}
+      int from = face_ptr;
+      int to = face_ptr + todo - 1;
+
+      struct render_xy_args *args = malloc(sizeof(struct render_xy_args));
+      args->render_line = render_line;
+      args->render_vertices = render_vertices;
+      args->from = from;
+      args->to = to;
+      int ret_val = pthread_create(&threads[i], NULL, render_xy_pthread, args);
+      if (ret_val != 0) { printf("error creating thread"); exit(1); }
+      
+      face_ptr += todo;
+    }
+  for(int i = 0; i < num_threads; i++)
+    {
+      void* retval;
+      pthread_join(threads[i], &retval);
+    }
 }

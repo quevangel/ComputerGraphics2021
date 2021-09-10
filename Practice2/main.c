@@ -23,8 +23,9 @@ main (int argc, char *argv[])
   char *ppm_filename = argv[2];
   FILE *obj_file = fopen (obj_filename, "r");
   FILE *ppm_file = fopen (ppm_filename, "w");
-  read_obj (obj_file);
-  render_xy (ppm_file, bresenham_render_line);
+  read_obj_fast (obj_file);
+  render_xy_multithreaded (6, bresenham_render_line);
+  print_image (ppm_file, 255);
   fclose (obj_file);
   fclose (ppm_file);
 }

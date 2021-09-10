@@ -1,15 +1,15 @@
-CC=gcc -O2 -c -pedantic -std=c99
+CC=gcc -Ofast -pedantic -std=c99 -lpthread
 main: main.o obj.o render.o
-	gcc main.o obj.o render.o -o main
+	$(CC) main.o obj.o render.o -o main
 
 main.o: main.c obj.h project.h render.h
-	$(CC) main.c
+	$(CC) -c main.c
 
 obj.o: obj.c obj.h
-	$(CC) obj.c
+	$(CC) -c obj.c
 
 render.o: render.c render.h
-	$(CC) render.c
+	$(CC) -c render.c
 
 indent:
 	indent *c *h

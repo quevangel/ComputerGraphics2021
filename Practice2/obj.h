@@ -25,3 +25,5 @@ extern struct face *faces;
 
 void init_obj ();
 void read_obj (FILE * file);
+void read_obj_fast (FILE * file);
+
