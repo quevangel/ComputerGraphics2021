@@ -1,4 +1,4 @@
-CC=gcc -g -c -pedantic -std=c99
+CC=gcc -O2 -c -pedantic -std=c99
 main: main.o obj.o render.o
 	gcc main.o obj.o render.o -o main
 
@@ -10,6 +10,9 @@ obj.o: obj.c obj.h
 
 render.o: render.c render.h
 	$(CC) render.c
+
+indent:
+	indent *c *h
 
 clean:
 	rm *o

@@ -7,15 +7,30 @@
 #include "project.h"
 #include "render.h"
 
+void print_help (char *executable_name);
+
 int
 main (int argc, char *argv[])
 {
+  if (argc < 3)
+    {
+      assert (argc >= 1);
+      print_help (argv[0]);
+      return 1;
+    }
   init_obj ();
-  if (argc < 2)
-    return 1;
-  char *filename = argv[1];
-  FILE *obj_file = fopen (filename, "r");
-  FILE *output_file = fopen ("out2.ppm", "w");
+  char *obj_filename = argv[1];
+  char *ppm_filename = argv[2];
+  FILE *obj_file = fopen (obj_filename, "r");
+  FILE *ppm_file = fopen (ppm_filename, "w");
   read_obj (obj_file);
-  render_xy (output_file, naive_render_line);
+  render_xy (ppm_file, bresenham_render_line);
+  fclose (obj_file);
+  fclose (ppm_file);
+}
+
+void
+print_help (char *executable_name)
+{
+  printf ("Usage: %s <input-obj-file> <output-ppm-file>\n", executable_name);
 }

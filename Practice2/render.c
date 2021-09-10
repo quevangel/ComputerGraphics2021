@@ -37,9 +37,58 @@ naive_render_line (int x1, int y1, int x2, int y2)
 }
 
 void
+dda_render_line (int x1, int y1, int x2, int y2)
+{
+  int tmp;
+  if (x1 == x2 && y1 == y2)
+    {
+      image[x1][y1]++;
+      return;
+    }
+  float dx = x2 - x1;
+  float adx = abs (dx);
+  float dy = y2 - y1;
+  float ady = abs (dy);
+  if (abs (dx) >= abs (dy))
+    {
+      if (x1 > x2)
+	{
+	  SWAP (x1, x2, tmp);
+	  SWAP (y1, y2, tmp);
+	}
+      float y = y1;
+      float m = dy / dx;
+      for (int x = x1; x <= x2; x++)
+	{
+	  y += m;
+	  image[x][(int) y]++;
+	}
+    }
+  else
+    {
+      if (y1 > y2)
+	{
+	  SWAP (x1, x2, tmp);
+	  SWAP (y1, y2, tmp);
+	}
+      float x = x1;
+      float m = dx / dy;
+      for (int y = y1; y <= y2; y++)
+	{
+	  x += m;
+	  image[(int) x][y]++;
+	}
+    }
+}
+
+void
 bresenham_render_line (int x1, int y1, int x2, int y2)
 {
-  if (x1 > x2) { bresenham_render_line (x2, y2, x1, y1); return; }
+  if (x1 > x2)
+    {
+      bresenham_render_line (x2, y2, x1, y1);
+      return;
+    }
 #define DO(action)				\
   int dx = x2 - x1;				\
   int dy = y2 - y1;				\
@@ -62,14 +111,14 @@ bresenham_render_line (int x1, int y1, int x2, int y2)
     {
       if (sdx >= sdy)
 	{
-	  DO(image[x][y]++);
+	  DO (image[x][y]++);
 	}
       else
 	{
 	  int tmp;
 	  SWAP (x1, y1, tmp);
 	  SWAP (x2, y2, tmp);
-	  DO(image[y][x]++);
+	  DO (image[y][x]++);
 	}
     }
   else
@@ -78,7 +127,7 @@ bresenham_render_line (int x1, int y1, int x2, int y2)
 	{
 	  y1 = -y1;
 	  y2 = -y2;
-	  DO(image[x][-y]++);
+	  DO (image[x][-y]++);
 	}
       else
 	{
@@ -87,7 +136,7 @@ bresenham_render_line (int x1, int y1, int x2, int y2)
 	  int tmp;
 	  SWAP (x1, y1, tmp);
 	  SWAP (x2, y2, tmp);
-	  DO(image[y][-x]++);
+	  DO (image[y][-x]++);
 	}
     }
 }
@@ -113,8 +162,8 @@ render_xy (FILE * file, void (*render_line) (int, int, int, int))
     }
   float width = hix - lox;
   float height = hiy - loy;
-  float factor_x = 1000.f / width;
-  float factor_y = 1000.f / height;
+  float factor_x = IMAGE_WIDTH / width;
+  float factor_y = IMAGE_HEIGHT / height;
   float factor = MIN (factor_x, factor_y);
   for (int i = 0; i < no_vertices; i++)
     {
@@ -136,19 +185,17 @@ render_xy (FILE * file, void (*render_line) (int, int, int, int))
 	  struct vertex2d v1 = render_vertices[face.indices[j]];
 	  struct vertex2d v2 =
 	    j + 1 <
-	    face.no_indices ? render_vertices[face.
-					      indices[j +
-						      1]] :
+	    face.no_indices ? render_vertices[face.indices[j +
+							   1]] :
 	    render_vertices[face.indices[0]];
 	  render_line (v1.x, v1.y, v2.x, v2.y);
 	}
     }
-  for (int x = 0; x < IMAGE_WIDTH; x++)
-    {
-      for (int y = 0; y < IMAGE_HEIGHT; y++)
-	{
-	  int pixel = MIN (image[x][y], resolution);
-	  fprintf (file, "%d %d %d\n", pixel, pixel, pixel);
-	}
-    }
+  for (int y = IMAGE_HEIGHT - 1; y >= 0; y--)
+    for (int x = 0; x < IMAGE_WIDTH; x++)
+      {
+	int pixel = MIN (image[x][y], resolution);
+	fprintf (file, "%d %d %d\n", pixel, pixel, pixel);
+      }
+
 }

@@ -37,8 +37,8 @@ insert_face (struct face face)
 void
 init_obj ()
 {
-  vertices = malloc(sizeof(struct vertex) * MAX_VERTICES);
-  faces = malloc(sizeof(struct face) * MAX_FACES);
+  vertices = malloc (sizeof (struct vertex) * MAX_VERTICES);
+  faces = malloc (sizeof (struct face) * MAX_FACES);
 }
 
 void
