@@ -30,8 +30,9 @@ float render_view_x, render_view_y, render_view_width, render_view_height;
 void
 compute_render_vertices (struct mat4 f)
 {
-  if (render_vertices) free (render_vertices);
-  render_vertices = malloc (sizeof(struct r3_vertex) * obj_no_vertices);
+  if (render_vertices)
+    free (render_vertices);
+  render_vertices = malloc (sizeof (struct r3_vertex) * obj_no_vertices);
   for (int i = 0; i < obj_no_vertices; i++)
     {
       struct r4_vertex tv = mat4_apply (f, obj_vertices[i]);
@@ -154,7 +155,7 @@ bresenham_render_line (int x1, int y1, int x2, int y2)
 	{
 	  SWAP (x1, y1, tmp);
 	  SWAP (x2, y2, tmp);
-	  DO (put_pixel(y, x));
+	  DO (put_pixel (y, x));
 	}
     }
   else
@@ -187,13 +188,14 @@ print_image (FILE * file, int resolution)
   for (int y = IMAGE_HEIGHT - 1; y >= 0; y--)
     for (int x = 0; x < IMAGE_WIDTH; x++)
       {
-	int pixel = MIN(image[x][y] * factor, resolution);
+	int pixel = MIN (image[x][y] * factor, resolution);
 	fprintf (file, "%d %d %d\n", pixel, pixel, pixel);
       }
 }
 
 void
-render_faces_range_xy (void (*render_line) (int, int, int, int), int from, int to)
+render_faces_range_xy (void (*render_line) (int, int, int, int), int from,
+		       int to)
 {
   for (int i = from; i <= to; i++)
     {
@@ -249,12 +251,14 @@ render_xy_multithreaded (int num_threads,
       int from = face_ptr;
       int to = face_ptr + todo - 1;
 
-      struct render_faces_range_xy_args *args = malloc (sizeof (struct render_faces_range_xy_args));
+      struct render_faces_range_xy_args *args =
+	malloc (sizeof (struct render_faces_range_xy_args));
       args->render_line = render_line;
       args->from = from;
       args->to = to;
       int ret_val =
-	pthread_create (&threads[i], NULL, render_faces_range_xy_pthread, args);
+	pthread_create (&threads[i], NULL, render_faces_range_xy_pthread,
+			args);
       if (ret_val != 0)
 	{
 	  printf ("error creating thread");

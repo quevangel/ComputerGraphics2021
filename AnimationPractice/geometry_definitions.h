@@ -15,5 +15,4 @@ struct r2_vertex
   float x, y;
 };
 
-struct r3_vertex
-r4_to_r3 (struct r4_vertex);
+struct r3_vertex r4_to_r3 (struct r4_vertex);

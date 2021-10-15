@@ -82,7 +82,11 @@ read_float (char **ptr)
   int intpart = 0;
   int fltpart = 0;
   int sgn = 1;
-  if ((**ptr) == '-') { sgn = -1; (*ptr)++; }
+  if ((**ptr) == '-')
+    {
+      sgn = -1;
+      (*ptr)++;
+    }
   do
     {
       intpart *= 10;
@@ -90,7 +94,7 @@ read_float (char **ptr)
       (*ptr)++;
     }
   while ((**ptr) && isdigit (**ptr));
-  
+
   if (**ptr != '.')
     return intpart;
   (*ptr)++;
@@ -103,7 +107,7 @@ read_float (char **ptr)
       (*ptr)++;
     }
   while (**ptr && isdigit (**ptr));
-  return sgn*(intpart + (float)fltpart/pow10);
+  return sgn * (intpart + (float) fltpart / pow10);
 }
 
 static inline float
@@ -114,22 +118,37 @@ read_float_fast (char **ptr)
   int frcpart = 0;
   int frcpow = 1;
   int state = 0;
- begin:
-  switch(**ptr)
+begin:
+  switch (**ptr)
     {
     default:
-      return sign * (intpart + (float)frcpart/frcpow);
+      return sign * (intpart + (float) frcpart / frcpow);
     case '-':
       sign *= -1;
       break;
     case '+':
       break;
-    case '0': case '1': case '2': case '3': case '4':
-    case '5': case '6': case '7': case '8': case '9':
-      switch(state)
+    case '0':
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+      switch (state)
 	{
-	case 0: intpart *= 10; intpart += **ptr - '0'; break;
-	case 1: frcpart *= 10; frcpart += **ptr - '0'; frcpow *= 10; break;
+	case 0:
+	  intpart *= 10;
+	  intpart += **ptr - '0';
+	  break;
+	case 1:
+	  frcpart *= 10;
+	  frcpart += **ptr - '0';
+	  frcpow *= 10;
+	  break;
 	}
       break;
     case '.':
@@ -141,12 +160,14 @@ read_float_fast (char **ptr)
 }
 
 static inline void
-read_space(char **ptr)
+read_space (char **ptr)
 {
- begin:
-  switch(**ptr)
+begin:
+  switch (**ptr)
     {
-    case ' ': case '\t': case '\n':
+    case ' ':
+    case '\t':
+    case '\n':
       (*ptr)++;
       goto begin;
     default:
@@ -158,18 +179,28 @@ static inline void
 read_int (char **ptr, int *val)
 {
   *val = 0;
- begin:
-  switch(**ptr)
+begin:
+  switch (**ptr)
     {
-    case '0': case '1': case '2': case '3': case '4':
-    case '5': case '6': case '7': case '8': case '9':
+    case '0':
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
       *val *= 10;
       *val += **ptr - '0';
       (*ptr)++;
       goto begin;
-    default: return;
+    default:
+      return;
     }
 }
+
 #include <math.h>
 float obj_min_x, obj_max_x, obj_min_y, obj_max_y, obj_min_z, obj_max_z;
 void
@@ -190,7 +221,7 @@ read_obj_fast (FILE * file)
   struct face face;
   while (*ptr)
     {
-      read_space(&ptr);
+      read_space (&ptr);
       if (*ptr == 0)
 	break;
       switch (*ptr)
@@ -198,34 +229,40 @@ read_obj_fast (FILE * file)
 	case 'v':
 	  {
 	    ptr++;
-	    read_space(&ptr);
+	    read_space (&ptr);
 	    vertex.x = read_float_fast (&ptr);
-	    if (vertex.x < obj_min_x) obj_min_x = vertex.x;
-	    if (vertex.x > obj_max_x) obj_max_x = vertex.x;
-	    read_space(&ptr);
+	    if (vertex.x < obj_min_x)
+	      obj_min_x = vertex.x;
+	    if (vertex.x > obj_max_x)
+	      obj_max_x = vertex.x;
+	    read_space (&ptr);
 	    vertex.y = read_float_fast (&ptr);
-	    if (vertex.y < obj_min_y) obj_min_y = vertex.y;
-	    if (vertex.y > obj_max_y) obj_max_y = vertex.y;
-	    read_space(&ptr);
+	    if (vertex.y < obj_min_y)
+	      obj_min_y = vertex.y;
+	    if (vertex.y > obj_max_y)
+	      obj_max_y = vertex.y;
+	    read_space (&ptr);
 	    vertex.z = read_float_fast (&ptr);
-	    if (vertex.z < obj_min_z) obj_min_z = vertex.z;
-	    if (vertex.z > obj_max_z) obj_max_z = vertex.z;
+	    if (vertex.z < obj_min_z)
+	      obj_min_z = vertex.z;
+	    if (vertex.z > obj_max_z)
+	      obj_max_z = vertex.z;
 	    insert_vertex (vertex);
 	  }
 	  break;
 	case 'f':
 	  {
 	    ptr++;
-	    read_space(&ptr);
+	    read_space (&ptr);
 	    face.no_indices = 0;
 	    int index;
 	    do
 	      {
-		read_int(&ptr, &index);
+		read_int (&ptr, &index);
 		face.indices[face.no_indices++] = index - 1;
-		read_space(&ptr);
+		read_space (&ptr);
 	      }
-	    while (isdigit(*ptr));
+	    while (isdigit (*ptr));
 	    insert_face (face);
 	  }
 	  break;
