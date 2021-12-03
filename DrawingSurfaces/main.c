@@ -6,6 +6,7 @@
 #include "obj.h"
 #include "render.h"
 #include "linear_transformations.h"
+#include "bezier.h"
 
 void print_help (char *executable_name);
 
@@ -19,8 +20,19 @@ main (int argc, char *argv[])
       return 1;
     }
   init_obj ();
-  char *obj_filename = argv[1];
-  char *ppm_filename = argv[2];
+  bez_init ();
+  
+  char *bezier_filename = argv[1];
+  char *obj_filename = argv[2];
+  char *ppm_filename = "bezier.ppm";
+
+  FILE *bezier_file = fopen (bezier_filename, "r");
+  FILE *obj_file = fopen (obj_filename, "w");
+
+  bez_read (bezier_file);
+  bez_write_obj (obj_file);
+
+  /*
   FILE *obj_file = fopen (obj_filename, "r");
   read_obj_fast (obj_file);
   printf ("There are %d vertices and %d faces\n",
@@ -58,7 +70,7 @@ main (int argc, char *argv[])
       fclose (frame_file);
       model_t = mat4_multiply (frame_rotation, model_t);
     }
-  fclose (obj_file);
+    fclose (obj_file); */
 }
 
 void
