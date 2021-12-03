@@ -35,9 +35,13 @@ This will produce in little time 32 images named out-xxx.ppm which can be viewed
 
 # Bezier File Format
 
+```
 <points per mesh row> <points per mesh column>
 <control points mesh no rows : n> <control points mesh no cols : m>
 <point 1 1> ... <point 1 m>
 <point 2 1> ... <point 2 m>
 ...
 <point n 1> ... <point n m>
+```
+
+See bezier_file for an example.
