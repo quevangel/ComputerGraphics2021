@@ -1,0 +1,13 @@
+*~
+*.o
+callgrind*
+*ppm
+*obj
+AnimationPractice/main
+*mp4
+*txt
+Practice2/.kdev4/
+Practice2/main
+*kdev4
+*.out
+*wav
