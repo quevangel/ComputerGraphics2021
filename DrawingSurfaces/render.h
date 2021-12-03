@@ -22,7 +22,7 @@ extern float render_view_x, render_view_y, render_view_width,
 void compute_render_vertices (struct mat4 f);
 void render_faces_range_xy (void (*render_line) (int, int, int, int),
 			    int from, int to);
-void print_image (FILE * file, int resolution);
+void print_image (FILE * file, int resolution, float factor);
 void render_xy_multithreaded (int num_threads,
 			      void (*render_line) (int, int, int, int));
 void naive_render_line (int, int, int, int);

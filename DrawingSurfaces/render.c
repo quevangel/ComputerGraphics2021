@@ -178,12 +178,11 @@ bresenham_render_line (int x1, int y1, int x2, int y2)
 }
 
 void
-print_image (FILE * file, int resolution)
+print_image (FILE * file, int resolution, float factor)
 {
   fprintf (file, "P3\n");
   fprintf (file, "%d %d\n", IMAGE_WIDTH, IMAGE_HEIGHT);
   fprintf (file, "%d\n", resolution);
-  float factor = 0.4;
 
   for (int y = IMAGE_HEIGHT - 1; y >= 0; y--)
     for (int x = 0; x < IMAGE_WIDTH; x++)
