@@ -23,9 +23,9 @@ main (int argc, char *argv[])
   bez_init ();
   
   char *bezier_filename = argv[1];
-  char *obj_filename = argv[2];
+  char *obj_filename = "out.obj";
+  char *ppm_filename = argv[2];
   
-  char *ppm_filename = "bezier.ppm";
   FILE *bezier_file = fopen (bezier_filename, "r");
   FILE *obj_file = fopen (obj_filename, "w");
   bez_read (bezier_file);
@@ -44,7 +44,7 @@ main (int argc, char *argv[])
     = mat4_make_translation (-obj_min_x - model_width * 0.5f,
 			     -obj_min_y - model_height * 0.5f,
 			     -obj_min_z - model_depth * 0.5f);
-  model_t = mat4_multiply (mat4_make_scale (3, 3, 3), model_t);
+  model_t = mat4_multiply (mat4_make_scale (8.0/model_width, 8.0/model_height, 8.0/model_depth), model_t);
   struct mat4 trans_t = mat4_make_translation (0, 0, 0);
   float dt = 1.0 / 16.0;
   struct mat4 frame_rotation = mat4_make_rotation_by_y (dt * M_PI * 2.0);
@@ -75,5 +75,5 @@ main (int argc, char *argv[])
 void
 print_help (char *executable_name)
 {
-  printf ("Usage: %s <input-obj-file> <output-ppm-file>\n", executable_name);
+  printf ("Usage: %s <input-bezier-file (bezier_file, for example)> <output-ppm-file (without .ppm suffix)>\n", executable_name);
 }
