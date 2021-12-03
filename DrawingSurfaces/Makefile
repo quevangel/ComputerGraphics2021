@@ -1,9 +1,12 @@
-CC=gcc -Wall -pedantic -std=gnu11 -lpthread -O3 -lm -g
-main: main.o obj.o render.o linear_transformations.o geometry_definitions.o
-	$(CC) main.o obj.o render.o geometry_definitions.o linear_transformations.o -o main
+CC=gcc -Wall -pedantic -std=gnu11 -lpthread -Og -lm -g
+main: main.o obj.o render.o linear_transformations.o geometry_definitions.o bezier.o
+	$(CC) main.o obj.o render.o geometry_definitions.o linear_transformations.o bezier.o -o main
 
-main.o: main.c obj.h render.h
+main.o: main.c obj.h render.h bezier.h
 	$(CC) -c main.c
+
+bezier.o: bezier.c bezier.h geometry_definitions.h
+	$(CC) -c bezier.c
 
 obj.o: obj.c obj.h
 	$(CC) -c obj.c
