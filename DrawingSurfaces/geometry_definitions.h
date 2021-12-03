@@ -16,3 +16,6 @@ struct r2_vertex
 };
 
 struct r3_vertex r4_to_r3 (struct r4_vertex);
+
+void r3_scale (struct r3_vertex*, float);
+void r3_add (struct r3_vertex*, struct r3_vertex);
