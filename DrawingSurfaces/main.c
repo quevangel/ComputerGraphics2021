@@ -24,16 +24,15 @@ main (int argc, char *argv[])
   
   char *bezier_filename = argv[1];
   char *obj_filename = argv[2];
+  
   char *ppm_filename = "bezier.ppm";
-
   FILE *bezier_file = fopen (bezier_filename, "r");
   FILE *obj_file = fopen (obj_filename, "w");
-
   bez_read (bezier_file);
   bez_write_obj (obj_file);
-
-  /*
-  FILE *obj_file = fopen (obj_filename, "r");
+  fclose (obj_file);
+  
+  obj_file = fopen (obj_filename, "r");
   read_obj_fast (obj_file);
   printf ("There are %d vertices and %d faces\n",
 	  obj_no_vertices, obj_no_faces);
@@ -45,16 +44,16 @@ main (int argc, char *argv[])
     = mat4_make_translation (-obj_min_x - model_width * 0.5f,
 			     -obj_min_y - model_height * 0.5f,
 			     -obj_min_z - model_depth * 0.5f);
-  model_t = mat4_multiply (mat4_make_scale (1, 1, 1), model_t);
-  struct mat4 trans_t = mat4_make_translation (0, 0, 1.5);
-  float dt = 1.0 / 40.0;
+  model_t = mat4_multiply (mat4_make_scale (3, 3, 3), model_t);
+  struct mat4 trans_t = mat4_make_translation (0, 0, 0);
+  float dt = 1.0 / 16.0;
   struct mat4 frame_rotation = mat4_make_rotation_by_y (dt * M_PI * 2.0);
-  struct mat4 P = mat4_make_perspective_xy (1.0);
+  struct mat4 P = mat4_make_identity ();
   render_view_x = -5;
   render_view_y = -5;
   render_view_width = 10;
   render_view_height = 10;
-  for (int i = 0; i < 80; i++)
+  for (int i = 0; i < 32; i++)
     {
       char frame_name[256];
       sprintf (frame_name, "%s-%03d.ppm", ppm_filename, i);
@@ -64,13 +63,13 @@ main (int argc, char *argv[])
       T = mat4_multiply (P, T);
       compute_render_vertices (T);
       render_clear ();
-      render_xy_multithreaded (6, bresenham_render_line);
-      print_image (frame_file, 255);
+      render_xy_multithreaded (1, naive_render_line);
+      print_image (frame_file, 1, 1);
       printf ("written %s\n", frame_name);
       fclose (frame_file);
       model_t = mat4_multiply (frame_rotation, model_t);
     }
-    fclose (obj_file); */
+    fclose (obj_file);
 }
 
 void
