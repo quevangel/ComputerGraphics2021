@@ -40,19 +40,25 @@ main (int argc, char *argv[])
   float model_height = obj_max_y - obj_min_y;
   float model_depth = obj_max_z - obj_min_z;
   printf ("w %f h %f d %f\n", model_width, model_height, model_depth);
-  struct mat4 model_t
-    = mat4_make_translation (-obj_min_x - model_width * 0.5f,
-			     -obj_min_y - model_height * 0.5f,
-			     -obj_min_z - model_depth * 0.5f);
-  model_t = mat4_multiply (mat4_make_scale (8.0/model_width, 8.0/model_height, 8.0/model_depth), model_t);
-  struct mat4 trans_t = mat4_make_translation (0, 0, 0);
-  float dt = 1.0 / 16.0;
-  struct mat4 frame_rotation = mat4_make_rotation_by_y (dt * M_PI * 2.0);
-  struct mat4 P = mat4_make_identity ();
+  
   render_view_x = -5;
   render_view_y = -5;
   render_view_width = 10;
   render_view_height = 10;
+  
+  struct mat4 model_t
+    = mat4_make_translation (-obj_min_x - model_width * 0.5f,
+			     -obj_min_y - model_height * 0.5f,
+			     -obj_min_z - model_depth * 0.5f);
+  float actual_width = model_width > model_depth? model_width : model_depth;
+  float width_max_factor = render_view_width / actual_width;
+  float height_max_factor = render_view_height / model_height;
+  float factor = width_max_factor < height_max_factor? width_max_factor : height_max_factor;
+  model_t = mat4_multiply (mat4_make_scale (factor, factor, factor), model_t);
+  struct mat4 trans_t = mat4_make_translation (0, 0, 0);
+  float dt = 1.0 / 16.0;
+  struct mat4 frame_rotation = mat4_make_rotation_by_y (dt * M_PI * 2.0);
+  struct mat4 P = mat4_make_identity ();
   for (int i = 0; i < 32; i++)
     {
       char frame_name[256];
