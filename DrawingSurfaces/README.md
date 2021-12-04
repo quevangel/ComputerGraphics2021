@@ -33,6 +33,14 @@ I have included a demo bezier_file to show the input format and also produce som
 
 This will produce in little time 32 images named out-xxx.ppm which can be viewed and will show the rotating object described in the bezier_file.
 
+## Additional Demo: A modern chair
+
+To render a rotating modern chair, use the provided demo in the bezier_chair:
+
+```
+./main bezier_chair out
+```
+
 # Bezier File Format
 
 ```
